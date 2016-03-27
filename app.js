@@ -1,5 +1,7 @@
+import "babel-polyfill";
+
 // Iterators
-/*
+
 function createIterator(items) {
 	var i = 0;
 	return {
@@ -21,7 +23,7 @@ console.log(iterator.next()); // "{ value: 3, done: false }"
 console.log(iterator.next()); // "{ value: undefined, done: true }"
 // за всички по-нататъшни извиквания
 console.log(iterator.next()); // "{ value: undefined, done: true }"
-*/
+
 
 //Generators
 
@@ -37,7 +39,7 @@ console.log(iterator1.next().value); //1
 console.log(iterator1.next().value); //2
 console.log(iterator1.next().value); //3
 
-
+/*1
 
 //for
 let createIterator1 = function*(items) {
@@ -454,6 +456,30 @@ run(function*() {
 	console.log(3);
 });
 
+run(function*() {
+	let value - yield 1;
+	console.log(value); // 1
+	values = yield value + 3;
+	console.log(value);
+});
+
+//asinhron
+function fetchData(){
+	return function(callback){
+		setTimeout(function(){
+			callback(null,'Hi!');
+		},50);	
+	};
+}
+
+
+
+
+
+
+
+
+
 //with data
 
 function run(taskDef) {
@@ -463,16 +489,37 @@ function run(taskDef) {
 	let result = task.next();
 	//рекурсивна функция, която държи извикванията към next()
 	function step() {
-		result - task.next(result.value);
-		step();
+		if (!result.done) {
+			if (typeof result.value==='function') {
+				result.value(function(err,data){
+					if (err) {
+						result=task.throw(err);
+						return;
+					}
+					result=task.next(data);
+					step();
+				});
+			}else{
+				result=task.next(result.value);
+				step();
+			}
+		}
 	}
 	//старт на процеса
 	step();
 }
 
-run(function*() {
-	let value - yield 1;
-	console.log(value); // 1
-	values = yield value + 3;
-	console.log(value);
-})
+let fs=require('fs');
+function readFile(filename){
+	return function(callback){
+		fs.readFile(filename,callback);
+	};
+}
+run function*(){
+	let contents=yield readFile('config.json');
+	doSomethingWith(contents);
+	console.log('Done');
+}
+
+
+*/
